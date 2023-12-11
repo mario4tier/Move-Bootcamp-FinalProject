@@ -1,0 +1,5 @@
+[meta]
+creation_timestamp = "1701581214549001 2023-12-03 00:26:54.549001931 -05:00"
+
+[packages]
+devhub = { uuid = "ZPPEJP4NFK4YGVFILSTO5WMYOU", uuid_custom = false }
