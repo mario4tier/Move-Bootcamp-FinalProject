@@ -17,4 +17,4 @@ clap.workspace = true
 futures.workspace = true
 colored.workspace = true
 
-suibase = { path = "../../../../suibase/rust/helper" }
+suibase = { path = "../../../../../suibase/rust/helper" }

@@ -10,36 +10,32 @@ module demo::Counter {
     use sui::event;
     use sui::transfer;
 
+    use log::console::{Console};
+
     // Allow unit test module to use this object friend functions.
     #[test_only]
     friend demo::test_counter;
 
     // Move event emitted on every increment.
-    struct CounterChanged has copy, drop {
+    public struct CounterChanged has copy, drop {
         count: u64,  // New value.
         by_address: address, // Sender of the transaction that caused the change.
     }
 
     // Shared object that is targeted for the demo.
-    struct Counter has key {
+    public struct Counter has key, store {
         id: UID,
         count: u64,
     }
 
     // The initialization function called at the moment of publication.
-    #[lint_allow(share_owned)]
     fun init(ctx: &mut TxContext) {
-      let new_counter = demo::Counter::new(ctx);
+      let new_counter = Counter { id: object::new(ctx), count: 0 };
       transfer::share_object( new_counter );
     }
-
-    // Notice that for this example, the new() is not called from
-    // a transaction.
-    //
-    // Only init() calls new to guarantee one instance per package.
-    //
-    // It is still mark with (friend) to allow for unit testing.
-    public fun new( ctx: &mut TxContext): Counter
+    
+    #[test_only]
+    public(friend) fun new( ctx: &mut TxContext): Counter
     {
         Counter { id: object::new(ctx), count: 0 }
     }
@@ -54,8 +50,10 @@ module demo::Counter {
         self.count
     }
 
-    public(friend) fun inc(self: &mut Counter, ctx: &TxContext)
-    {
+    public(friend) fun inc(self: &mut Counter, console: &Console, ctx: &TxContext)
+    {                
+        console.debug(b"internal inc() called");
+
         self.count = self.count + 1;
 
         let sender = tx_context::sender(ctx);
@@ -65,8 +63,15 @@ module demo::Counter {
     // Transaction to increment the counter
     public entry fun increment(self: &mut Counter, ctx: &TxContext)
     {
+        // Initalize the console. Default is to enable all log levels.
+        let mut console = log::console::default();
+        log::console::set_log_level(&mut console, log::consts::Info());
+
+        // Log a message.        
+        console.info(b"increment() entry called");
+
         // No check of the sender. Anyone can increment the counter.
-        demo::Counter::inc(self, ctx);
+        demo::Counter::inc(self, &console, ctx);
     }
 }
 
