@@ -4,7 +4,8 @@ version = "0.0.1"
 edition = "2024.alpha"
 
 [dependencies]
-Sui = { local = "../../../../suibase/workdirs/active/sui-repo/crates/sui-framework/packages/sui-framework" }
+#Sui = { local = "../../../../suibase/workdirs/active/sui-repo/crates/sui-framework/packages/sui-framework" }
+Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "devnet" }
 Log = { local = "../../../../suibase/move/@suibase/log" }
 
 [addresses]
